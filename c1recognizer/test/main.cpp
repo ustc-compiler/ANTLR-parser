@@ -16,10 +16,11 @@ int main(int argc, char **argv)
         std::cerr << "Usage: c1r_test <input>." << std::endl;
         return -1;
     }
-    */
+    
 
-    std::ifstream input(std::cin);
-    c1_recognizer::recognizer rcg(input);
+    std::ifstream input(argv[1]);
+    */
+    c1_recognizer::recognizer rcg(std::cin);
     c1_recognizer::error_reporter reporter(std::cerr);
 
     if (!rcg.execute(reporter))
