@@ -10,13 +10,15 @@
 
 int main(int argc, char **argv)
 {
+    /*
     if (argc < 2)
     {
         std::cerr << "Usage: c1r_test <input>." << std::endl;
         return -1;
     }
+    */
 
-    std::ifstream input(argv[1]);
+    std::ifstream input(std::cin);
     c1_recognizer::recognizer rcg(input);
     c1_recognizer::error_reporter reporter(std::cerr);
 
