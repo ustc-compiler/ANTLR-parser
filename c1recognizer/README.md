@@ -103,4 +103,6 @@ And for the most special, magic and wonderful part of ANTLR, visualization, foll
   ```
 
 - on your machine
+  
   - In file `run_lexer.sh`, modify  `export CLASSPATH='.:/usr/local/lib/antlr-4.7.2-complete.jar:$CLASSPATH'` to your path to antlr-4.7.2-complete.jar
+  - follow the comment in file `run_lexer.sh`(Line25-28) to uncomment and comment some lines 
