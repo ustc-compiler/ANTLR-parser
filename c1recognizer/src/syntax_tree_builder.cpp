@@ -1,5 +1,5 @@
 
-#include "syntax_tree_builder.h"
+#include <c1recognizer/syntax_tree_builder.h>
 #include <memory>
 
 using namespace c1_recognizer;

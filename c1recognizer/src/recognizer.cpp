@@ -3,8 +3,8 @@
 #include <C1Parser.h>
 #include <c1recognizer/recognizer.h>
 
-#include "syntax_tree_builder.h"
-#include "error_listener.h"
+#include <c1recognizer/syntax_tree_builder.h>
+#include <c1recognizer/error_listener.h>
 
 using namespace c1_recognizer;
 using namespace syntax_tree;

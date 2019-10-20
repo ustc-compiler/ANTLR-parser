@@ -1,5 +1,5 @@
 
-#include "error_listener.h"
+#include <c1recognizer/error_listener.h>
 
 using namespace antlr4;
 using namespace c1_recognizer;
