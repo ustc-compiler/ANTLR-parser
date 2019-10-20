@@ -11,11 +11,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_CXX_STANDARD 14)
 
 # set variable pointing to the antlr tool that supports C++
-#set(ANTLR_EXECUTABLE "NOT-FOUND" CACHE STRING "ANTLR v4 JAR file location. Used by antlr4cpp.")
 set(ANTLR4CPP_JAR_LOCATION "NOT-FOUND" CACHE STRING "ANTLR v4 JAR file location. Used by antlr4cpp.")
-
-# add macros to generate ANTLR Cpp code from grammar
-find_package(ANTLR REQUIRED)
 
 # Call macro to add lexer and grammar to your build dependencies.
 antlr4cpp_process_grammar(c1_recognizer c1_recognizer
