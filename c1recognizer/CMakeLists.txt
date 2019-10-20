@@ -18,7 +18,8 @@ find_package(ANTLR REQUIRED)
 
 # Call macro to add lexer and grammar to your build dependencies.
 antlr_target(C1Lexer ${CMAKE_CURRENT_SOURCE_DIR}/grammar/C1Lexer.g4 LEXER)
-antlr_target(C1Parser ${CMAKE_CURRENT_SOURCE_DIR}/grammar/C1Parser.g4 PARSER LISTENER VISITOR)
+antlr_target(C1Parser ${CMAKE_CURRENT_SOURCE_DIR}/grammar/C1Parser.g4 PARSER LISTENER VISITOR
+             DEPENDS_ANTLR C1Lexer)
 
 # include generated files in project environment
 include_directories(${ANTLR_C1Lexer_OUTPUT_DIR})
