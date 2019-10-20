@@ -79,3 +79,28 @@ And for the most special, magic and wonderful part of ANTLR, visualization, foll
   # Testing lexer + parser, console printed version parse tree
   java org.antlr.v4.gui.TestRig C1 compilationUnit -tree ../../test/test_cases/simple.c1
   ```
+
+## run_lexer.sh
+
+- educoder(in `c1recognizer/`):
+
+  - cpp
+
+  ```sh
+  cat path/to/testfile | ./run_lexer.sh cpp
+  ```
+
+  - java
+
+  ```sh
+  cat path/to/testfile | ./run_lexer.sh java
+  ```
+
+  - example
+
+  ```sh
+  cat test/test_cases/simple.c1 | ./run_lexer.sh java
+  ```
+
+- on your machine
+  - In file `run_lexer.sh`, modify  `export CLASSPATH='.:/usr/local/lib/antlr-4.7.2-complete.jar:$CLASSPATH'` to your path to antlr-4.7.2-complete.jar
