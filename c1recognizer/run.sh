@@ -1,6 +1,6 @@
 #!/bin/bash
-#export CLASSPATH='.:/usr/local/lib/antlr-4.7.2-complete.jar:$CLASSPATH'
-export CLASSPATH='.:/home/hyt/compile/antlr-4.7.2-complete.jar:$CLASSPATH'
+# change to your /full/path/to/antlr-4.7.2-complete.jar
+export CLASSPATH='.:/usr/local/lib/antlr-4.7.2-complete.jar:$CLASSPATH'
 antlr4='java org.antlr.v4.Tool'
 grun='java org.antlr.v4.gui.TestRig'
 
