@@ -6,8 +6,8 @@
 using namespace antlr4;
 
 int main(int argc, const char* argv[]) {
-    std::ifstream infile(argv[1]);
-    ANTLRInputStream input(infile);
+    //std::ifstream infile(argv[1]);
+    ANTLRInputStream input(std::cin);
     C1Lexer lexer(&input);
     CommonTokenStream tokens(&lexer);
 
