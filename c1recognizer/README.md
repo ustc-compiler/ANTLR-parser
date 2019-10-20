@@ -31,7 +31,7 @@ For first time building:
 ```bash
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Debug -DANTLR4CPP_JAR_LOCATION=/path/to/your/antlr.jar ..
+cmake -DCMAKE_BUILD_TYPE=Debug -DANTLR_EXECUTABLE=/path/to/your/antlr.jar ..
 make
 ```
 
