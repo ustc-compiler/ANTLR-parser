@@ -26,7 +26,7 @@ elif [[ $1 == "cpp" ]]; then
     #g++ -std=c++11 ../test/lexer.cpp C1Lexer.cpp -I../include/antlr4-runtime -I. -L../Libs_for_c1r_ref/ -lantlr4-runtime -o c1lexer
     #LD_LIBRARY_PATH=../Libs_for_c1r_ref ./c1lexer
     # comment below if you run this file on your machine
-    g++ -std=c++11 ../test/lexer.cpp C1Lexer.cpp -I../include/antlr4-runtime -I. -L../Libs_for_c1r_ref/ -lantlr4-runtime -o c1lexer
+    g++ -std=c++11 ../test/lexer.cpp C1Lexer.cpp -I../include/antlr4-runtime -I. -lantlr4-runtime -o c1lexer
     ./c1lexer
 fi
 
