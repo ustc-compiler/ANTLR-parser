@@ -7,8 +7,8 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-# compiler must be 11 or 14
-set(CMAKE_CXX_STANDARD 14)
+# compiler must be 17
+set(CMAKE_CXX_STANDARD 17)
 
 # set variable pointing to the antlr tool that supports C++
 set(ANTLR_EXECUTABLE "NOT-FOUND" CACHE STRING "ANTLR v4 JAR file location. Used by antlr4cpp.")
@@ -39,7 +39,7 @@ add_library(c1recognizer
   src/recognizer.cpp
   ${ANTLR_C1Lexer_CXX_OUTPUTS}
   ${ANTLR_C1Parser_CXX_OUTPUTS})
-target_link_libraries(c1recognizer antlr4-runtime-4.13.1)
+target_link_libraries(c1recognizer antlr4-runtime)
 
 include_directories(${rapidjson_include_dirs})
 add_executable(c1r_test test/main.cpp)
