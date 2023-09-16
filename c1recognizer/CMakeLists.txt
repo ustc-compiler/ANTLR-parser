@@ -28,7 +28,7 @@ include_directories(${ANTLR_C1Parser_OUTPUT_DIR})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 # add antrl4cpp artifacts to project environment
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/antlr4-runtime)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/antlr4-runtime-4.13.1)
 
 # add generated grammar to c1_recognizer binary target
 add_library(c1recognizer
@@ -39,7 +39,7 @@ add_library(c1recognizer
   src/recognizer.cpp
   ${ANTLR_C1Lexer_CXX_OUTPUTS}
   ${ANTLR_C1Parser_CXX_OUTPUTS})
-target_link_libraries(c1recognizer antlr4-runtime)
+target_link_libraries(c1recognizer antlr4-runtime-4.13.1)
 
 include_directories(${rapidjson_include_dirs})
 add_executable(c1r_test test/main.cpp)
