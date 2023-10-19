@@ -39,7 +39,8 @@ add_library(c1recognizer
   src/recognizer.cpp
   ${ANTLR_C1Lexer_CXX_OUTPUTS}
   ${ANTLR_C1Parser_CXX_OUTPUTS})
-target_link_libraries(c1recognizer antlr4-runtime)
+
+target_link_libraries(c1recognizer /usr/local/lib/libantlr4-runtime.so)
 
 include_directories(${rapidjson_include_dirs})
 add_executable(c1r_test test/main.cpp)
