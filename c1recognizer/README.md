@@ -5,8 +5,8 @@ A C1 language recognizer library built on ANTLR v4, which constructs an abstract
 ## Build Requirement
 
 * CMake 3.5 or later
-* Any GCC compatible C++ compiler, C++ 11 must be supported
-* Any java runtime environment (JRE), preferring version for Java 8
+* Any GCC compatible C++ compiler, C++ 17 must be supported
+* Any java runtime environment (JRE), preferring version for Java 11
 * pkg-config
 * uuid-dev
 
@@ -16,7 +16,7 @@ Otherwise please choose one of the easy-to-use Linux distributions. (Note: Windo
 For example, installing those in Ubuntu with `apt`:
 
 ```bash
-sudo apt install cmake g++ openjdk-8-jre-headless pkg-config uuid-dev
+sudo apt install cmake g++ openjdk-11-jre-headless pkg-config uuid-dev
 ```
 
 Also, it would take a while to build it for the first time. This is because it needs to build the dependency antlr4cpp.
@@ -104,5 +104,5 @@ And for the most special, magic and wonderful part of ANTLR, visualization, foll
 
 - on your machine
   
-  - In file `run_lexer.sh`, modify  `export CLASSPATH='.:/usr/local/lib/antlr-4.7.2-complete.jar:$CLASSPATH'` to your path to antlr-4.7.2-complete.jar
-  - follow the comment in file `run_lexer.sh`(Line25-28) to uncomment and comment some lines 
+  - In file `run_lexer.sh`, modify  `export CLASSPATH='.:/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH'` to your path to antlr-4.13.1-complete.jar
+  - follow the comment in file `run_lexer.sh`(Line27-30) to uncomment and comment some lines 
