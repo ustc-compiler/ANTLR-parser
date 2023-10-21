@@ -29,6 +29,8 @@ You may find it from [ANTLR v4 Official Site](http://www.antlr.org/).
 
 For first time building:
 ```bash
+cp Libs_for_c1r_ref/libantlr4-runtime.so.4.13.1 /usr/local/lib
+ln -snf /usr/local/lib/libantlr4-runtime.so.4.13.1 /usr/local/lib/libantlr4-runtime.so
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Debug -DANTLR_EXECUTABLE=/path/to/your/antlr.jar ..
