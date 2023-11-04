@@ -5,6 +5,18 @@
 using namespace c1_recognizer;
 using namespace c1_recognizer::syntax_tree;
 
+// You should use std::any_cast instead of dynamic_cast or static_cast
+template<typename T>
+bool is(std::any operand) {
+    return std::any_cast<T>(&operand) != nullptr;
+}
+
+// Return pointer to the value of std::any object
+template<typename T>
+auto as(std::any operand) {
+    return *(std::any_cast<T>(&operand));
+}
+
 syntax_tree_builder::syntax_tree_builder(error_reporter &_err) : err(_err) {}
 
 antlrcpp::Any syntax_tree_builder::visitCompilationUnit(C1Parser::CompilationUnitContext *ctx)
@@ -51,9 +63,8 @@ antlrcpp::Any syntax_tree_builder::visitCond(C1Parser::CondContext *ctx)
 {
 }
 
-// Returns antlrcpp::Any, which is constructable from any type.
-// However, you should be sure you use the same type for packing and depacking the `Any` object.
-// Or a std::bad_cast exception will rise.
+// Returns antlrcpp::Any, which is std::any.
+// You should be sure you use the same type for packing and depacking the `Any` object.
 // This function always returns an `Any` object containing a `expr_syntax *`.
 antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)
 {
@@ -69,10 +80,10 @@ antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)
         // visit(some context) is equivalent to calling corresponding visit method; dispatching is done automatically
         // by ANTLR4 runtime. For this case, it's equivalent to visitExp(expressions[0]).
         // Use reset to set a new pointer to a std::shared_ptr object. DO NOT use assignment; it won't work.
-        // Use `.as<Type>()' to get value from antlrcpp::Any object; notice that this Type must match the type used in
+        // Use `as<Type>(std::any)' to get value from antlrcpp::Any object; notice that this Type must match the type used in
         // constructing the Any object, which is constructed from (usually pointer to some derived class of
         // syntax_node, in this case) returning value of the visit call.
-        result->lhs.reset(visit(expressions[0]).as<expr_syntax *>());
+        result->lhs.reset(as<expr_syntax *>(visit(expressions[0])));
         // Check if each token exists.
         // Returnd value of the calling will be nullptr (aka NULL in C) if it isn't there; otherwise non-null pointer.
         if (ctx->Plus())
@@ -85,7 +96,7 @@ antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)
             result->op = binop::divide;
         if (ctx->Modulo())
             result->op = binop::modulo;
-        result->rhs.reset(visit(expressions[1]).as<expr_syntax *>());
+        result->rhs.reset(as<expr_syntax *>(visit(expressions[1])));
         return static_cast<expr_syntax *>(result);
     }
     // Otherwise, if `+` or `-` presented, it'll be a `unaryop_expr_syntax`.
@@ -98,7 +109,7 @@ antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)
             result->op = unaryop::plus;
         if (ctx->Minus())
             result->op = unaryop::minus;
-        result->rhs.reset(visit(expressions[0]).as<expr_syntax *>());
+        result->rhs.reset(as<expr_syntax *>(visit(expressions[0])));
         return static_cast<expr_syntax *>(result);
     }
     // In the case that `(` exists as a child, this is an expression like `'(' expressions[0] ')'`.
@@ -134,39 +145,39 @@ antlrcpp::Any syntax_tree_builder::visitNumber(C1Parser::NumberContext *ctx)
 ptr<syntax_tree_node> syntax_tree_builder::operator()(antlr4::tree::ParseTree *ctx)
 {
     auto result = visit(ctx);
-    if (result.is<syntax_tree_node *>())
-        return ptr<syntax_tree_node>(result.as<syntax_tree_node *>());
-    if (result.is<assembly *>())
-        return ptr<syntax_tree_node>(result.as<assembly *>());
-    if (result.is<global_def_syntax *>())
-        return ptr<syntax_tree_node>(result.as<global_def_syntax *>());
-    if (result.is<func_def_syntax *>())
-        return ptr<syntax_tree_node>(result.as<func_def_syntax *>());
-    if (result.is<cond_syntax *>())
-        return ptr<syntax_tree_node>(result.as<cond_syntax *>());
-    if (result.is<expr_syntax *>())
-        return ptr<syntax_tree_node>(result.as<expr_syntax *>());
-    if (result.is<binop_expr_syntax *>())
-        return ptr<syntax_tree_node>(result.as<binop_expr_syntax *>());
-    if (result.is<unaryop_expr_syntax *>())
-        return ptr<syntax_tree_node>(result.as<unaryop_expr_syntax *>());
-    if (result.is<lval_syntax *>())
-        return ptr<syntax_tree_node>(result.as<lval_syntax *>());
-    if (result.is<literal_syntax *>())
-        return ptr<syntax_tree_node>(result.as<literal_syntax *>());
-    if (result.is<stmt_syntax *>())
-        return ptr<syntax_tree_node>(result.as<stmt_syntax *>());
-    if (result.is<var_def_stmt_syntax *>())
-        return ptr<syntax_tree_node>(result.as<var_def_stmt_syntax *>());
-    if (result.is<assign_stmt_syntax *>())
-        return ptr<syntax_tree_node>(result.as<assign_stmt_syntax *>());
-    if (result.is<func_call_stmt_syntax *>())
-        return ptr<syntax_tree_node>(result.as<func_call_stmt_syntax *>());
-    if (result.is<block_syntax *>())
-        return ptr<syntax_tree_node>(result.as<block_syntax *>());
-    if (result.is<if_stmt_syntax *>())
-        return ptr<syntax_tree_node>(result.as<if_stmt_syntax *>());
-    if (result.is<while_stmt_syntax *>())
-        return ptr<syntax_tree_node>(result.as<while_stmt_syntax *>());
+    if (is<syntax_tree_node *>(result))
+        return ptr<syntax_tree_node>(as<syntax_tree_node *>(result));
+    if (is<assembly *>(result))
+        return ptr<syntax_tree_node>(as<assembly *>(result));
+    if (is<global_def_syntax *>(result))
+        return ptr<syntax_tree_node>(as<global_def_syntax *>(result));
+    if (is<func_def_syntax *>(result))
+        return ptr<syntax_tree_node>(as<func_def_syntax *>(result));
+    if (is<cond_syntax *>(result))
+        return ptr<syntax_tree_node>(as<cond_syntax *>(result));
+    if (is<expr_syntax *>(result))
+        return ptr<syntax_tree_node>(as<expr_syntax *>(result));
+    if (is<binop_expr_syntax *>(result))
+        return ptr<syntax_tree_node>(as<binop_expr_syntax *>(result));
+    if (is<unaryop_expr_syntax *>(result))
+        return ptr<syntax_tree_node>(as<unaryop_expr_syntax *>(result));
+    if (is<lval_syntax *>(result))
+        return ptr<syntax_tree_node>(as<lval_syntax *>(result));
+    if (is<literal_syntax *>(result))
+        return ptr<syntax_tree_node>(as<literal_syntax *>(result));
+    if (is<stmt_syntax *>(result))
+        return ptr<syntax_tree_node>(as<stmt_syntax *>(result));
+    if (is<var_def_stmt_syntax *>(result))
+        return ptr<syntax_tree_node>(as<var_def_stmt_syntax *>(result));
+    if (is<assign_stmt_syntax *>(result))
+        return ptr<syntax_tree_node>(as<assign_stmt_syntax *>(result));
+    if (is<func_call_stmt_syntax *>(result))
+        return ptr<syntax_tree_node>(as<func_call_stmt_syntax *>(result));
+    if (is<block_syntax *>(result))
+        return ptr<syntax_tree_node>(as<block_syntax *>(result));
+    if (is<if_stmt_syntax *>(result))
+        return ptr<syntax_tree_node>(as<if_stmt_syntax *>(result));
+    if (is<while_stmt_syntax *>(result))
+        return ptr<syntax_tree_node>(as<while_stmt_syntax *>(result));
     return nullptr;
 }
