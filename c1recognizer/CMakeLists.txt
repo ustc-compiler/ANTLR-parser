@@ -10,6 +10,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # compiler must be 17
 set(CMAKE_CXX_STANDARD 17)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS on)
+
 # set variable pointing to the antlr tool that supports C++
 set(ANTLR_EXECUTABLE "NOT-FOUND" CACHE STRING "ANTLR v4 JAR file location. Used by antlr4cpp.")
 
