@@ -29,7 +29,7 @@
    * 正确测试用例文件名前缀为`pt_`；
    * 错误测试用例文件名前缀为`ft_`。
   
-5. 在`c1recognizer/doc`目录下增加`markdown`文件，描述实验遇到的问题，分析与设计对问题`Lexer-Q1` ~ `Lexer-Q3`的回答，文件名前缀为`labLexer`。
+5. 在[`c1recognizer/doc/labLexerParser.md`](./labLexerParser.md)中编写对问题`Lexer-Q1` ~ `Lexer-Q3`的回答，描述实验遇到的问题。
 
 #####问题清单
 

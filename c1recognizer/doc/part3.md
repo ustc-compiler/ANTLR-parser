@@ -17,7 +17,7 @@
 4. 测试输入应置于`test/test_cases/parser`目录下：
    - 正确测试用例文件名前缀为`pt_`；
    - 错误测试用例文件名前缀为`ft_`。
-5. 在`c1recognizer/doc`目录下增加`markdown`文件，描述实验遇到的问题、分析与设计以及对问题`Parser-Q1` ~ `Parser-Q2`的回答，文件名前缀为`labParser`，以及可能被引用的图像文件。
+5. 在[`c1recognizer/doc/labLexerParser.md`](./labLexerParser.md)中编写对问题`Parser-Q1` ~ `Parser-Q2`的回答，描述实验遇到的问题。
 
 >注意：本实验采用的Ubuntu22.04没有VNC界面，如果需要查看grun -gui的界面建议在虚拟机中运行。
 
