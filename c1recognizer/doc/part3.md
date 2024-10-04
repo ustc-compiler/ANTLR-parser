@@ -32,7 +32,6 @@ S → Ac | Ad
 A → aA | b
 ```
 **2. Parser-Q2 理解[`Adaptive LL(*)`分析方法](https://dl.acm.org/citation.cfm?id=2660202)\[[`OOPSLA 2014`](https://2014.splashcon.org/)\]的原理**
-* 简述`ALL(*)`分析方法的核心逻辑，试比较它与`LL(*)`分析方法的区别；
 
 * 给定如下文法，描述输入`xba`的`ALL(*)`分析过程并给出最终构造的`lookahead DFA`。
   ```
