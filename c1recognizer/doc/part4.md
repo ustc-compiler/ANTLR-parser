@@ -36,6 +36,8 @@ c1recognizer/scr/syntax_tree_builder.cpp
 
 6. **构建与测试**
 
+使用VSCode的同学推荐使用插件[clangd](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd)。助教已经在CMakeLists.txt中配置好了相关选项，并添加了`.clangd`的配置文件。在编写好C1Parser.g4的文法文件，使用下述命令make，会在build文件夹下生成compile_commands.json文件。重启vscode之后就可以有自动补全等功能。
+
   第一次构建时，运行如下命令：
 ```bash
 cp Libs_for_c1r_ref/libantlr4-runtime.so.4.13.1 /usr/local/lib
@@ -112,6 +114,8 @@ cd build
     ]
 }
 ```
+> 注意每个结点的line, pos都是该语法规则第一个token的line和start position。
+
   在你的测试用例下生成的 AST 是正确的情况下，可以使用版本库中名为`c1r_ref_static`的二进制文件作为参考来查看生成的语法树。使用命令 ```./c1r_ref_static < testfile```。
 
 所有环境搭建与命令相关都有在代码库中的README.md中涉及，如有问题，请先查看文档。
@@ -124,7 +128,7 @@ cd build
 
 **AST-Q1 理解访问者**
 
-- 请结合`antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)`的实现 ，说明 `antlrcpp::Any`的定义位置及其意义及，及说明`C1Parser::ExpContext`、`result`的含义、以及它们与文法的对应关系、使用的编程接口及其含义；
+- 请结合`antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)`的实现 ，说明 `antlrcpp::Any`的定义位置及其意义，说明`C1Parser::ExpContext`、`result`的含义、以及它们与文法的对应关系、使用的编程接口及其含义；
 
 - 请结合函数`ptr<syntax_tree_node> syntax_tree_builder::operator()(antlr4::tree::ParseTree *ctx)`的实现，说明其中的`result`、`as<Type>(result)`的含义；
 
@@ -239,7 +243,7 @@ antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)
 这里，类[`syntax_tree_builder`](https://github.com/ustc-compiler/2018fall/blob/master/c1recognizer/src/syntax_tree_builder.h#L13) 是 [ANTLR v4](http://www.antlr.org/) 根据 `C1Parser.g4`自动生成的`C1ParserBaseVisitor`类的子类。`C1ParserBaseVisitor`是 [ANTLR v4](http://www.antlr.org/) 为类 `C1ParserVisitor`提供的一个空的实现，用户可以从它派生自己的访问者类，来根据需要实现其中的部分或全部方法。`C1Parser::ExpContext`的代码片段见上面 **Parser Tree 的结构**。为便于查看，下面列出`C1Parser::ExpContext`中的部分代码：
 
 ```
-  class  ExpContext : public antlr4::ParserRuleContext {
+  class ExpContext : public antlr4::ParserRuleContext {
   public:
     ExpContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -302,3 +306,18 @@ namespace tree {
 
 
 利用这样的访问者模式，用户可以定义不同的`tree`结构，为`tree`中不同类别的`node`分别实现一个`accept(visitor)`方法。而对`tree`的访问处理，则可以根据不同需求定义不同的`visitor`类，在其中为类`XXX`的`node`实现相应的`visitXXX(node)`方法。
+
+### 你可能使用的API
+
+`TerminalNode`类。TerminalNode是终结符结点基类。
+- `Token* getSymbol()`可以返回一个`Token`实例，包含C1Lexer.g4中定义的终结符的相关信息。
+
+`Token`类，
+- `std::string getText()`可以获取原始文本。
+- `size_t getLine()`可以获取终结符所在行。
+- `size_t getCharPositionInLine()`可以获取终结符的第一个字符所在的列数。
+- `size_t getTokenIndex()`可以获取这个token在所有token流中的下标，从0开始。
+
+`ParserRuleContext`类，全部非终结符`XXXContext`的基类。
+- `Token* getStart()`用于获取语法规则中的第一个token。
+
