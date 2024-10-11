@@ -140,7 +140,7 @@ struct literal_syntax : expr_syntax
 {
     bool is_int;
     int intConst;
-    double floatConst;
+    double floatConst; // use `std::stod` to convert from string to double
     virtual void accept(syntax_tree_visitor &visitor) override final;
 };
 
@@ -157,7 +157,7 @@ struct var_def_stmt_syntax : stmt_syntax, global_def_syntax
     bool is_constant;
     bool is_int;
     std::string name;
-    ptr<expr_syntax> array_length; // nullptr for non-array variables
+    ptr<expr_syntax> array_length; // nullptr for non-array variables. For `a[]`, you need to fill the `array_length` with the length of the initializer. For the `pos` and `line` of the `array_length` expr_syntax, just assign 0. For `a[exp]`, use the start line and pos of the token of `exp` provided by ANTLR.
     ptr_list<expr_syntax> initializers;
     virtual void accept(syntax_tree_visitor &visitor) override final;
 };
