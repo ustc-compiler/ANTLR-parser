@@ -1,66 +1,74 @@
 
+#include "c1recognizer/syntax_tree.h"
+#include <any>
 #include <c1recognizer/syntax_tree_builder.h>
 #include <memory>
+#include <vector>
 
 using namespace c1_recognizer;
 using namespace c1_recognizer::syntax_tree;
 
-// You should use std::any_cast instead of dynamic_cast or static_cast
 template<typename T>
-bool is(std::any operand) {
-    return std::any_cast<T>(&operand) != nullptr;
-}
-
-// Return pointer to the value of std::any object
-template<typename T>
-auto as(std::any operand) {
-    return *(std::any_cast<T>(&operand));
+auto as_syntax_tree(T* node) {
+    return ptr<syntax_tree_node>(static_cast<syntax_tree_node*>(node));
 }
 
 syntax_tree_builder::syntax_tree_builder(error_reporter &_err) : err(_err) {}
 
 antlrcpp::Any syntax_tree_builder::visitCompilationUnit(C1Parser::CompilationUnitContext *ctx)
 {
+    auto res = new assembly;
+    return as_syntax_tree(res);
 }
 
 antlrcpp::Any syntax_tree_builder::visitDecl(C1Parser::DeclContext *ctx)
 {
+    return VisitResult(new var_def_stmt_syntax);
 }
 
 antlrcpp::Any syntax_tree_builder::visitConstdecl(C1Parser::ConstdeclContext *ctx)
 {
+    return VisitResult(new var_def_stmt_syntax);
 }
 
 antlrcpp::Any syntax_tree_builder::visitConstdef(C1Parser::ConstdefContext *ctx)
 {
+    return VisitResult(new var_def_stmt_syntax);
 }
 
 antlrcpp::Any syntax_tree_builder::visitVardecl(C1Parser::VardeclContext *ctx)
 {
+    return VisitResult(new var_def_stmt_syntax);
 }
 
 antlrcpp::Any syntax_tree_builder::visitVardef(C1Parser::VardefContext *ctx)
 {
+    return VisitResult(new var_def_stmt_syntax);
 }
 
 antlrcpp::Any syntax_tree_builder::visitFuncdef(C1Parser::FuncdefContext *ctx)
 {
+    return VisitResult(new func_def_syntax);
 }
 
 antlrcpp::Any syntax_tree_builder::visitBlock(C1Parser::BlockContext *ctx)
 {
+    return VisitResult(new block_syntax);
 }
 
 antlrcpp::Any syntax_tree_builder::visitStmt(C1Parser::StmtContext *ctx)
 {
+    return VisitResult(new empty_stmt_syntax);
 }
 
 antlrcpp::Any syntax_tree_builder::visitLval(C1Parser::LvalContext *ctx)
 {
+    return VisitResult(new lval_syntax);
 }
 
 antlrcpp::Any syntax_tree_builder::visitCond(C1Parser::CondContext *ctx)
 {
+    return VisitResult(new unaryop_expr_syntax);
 }
 
 // Returns antlrcpp::Any, which is std::any.
@@ -83,7 +91,7 @@ antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)
         // Use `as<Type>(std::any)' to get value from antlrcpp::Any object; notice that this Type must match the type used in
         // constructing the Any object, which is constructed from (usually pointer to some derived class of
         // syntax_node, in this case) returning value of the visit call.
-        result->lhs.reset(as<expr_syntax *>(visit(expressions[0])));
+        result->lhs.reset((*this)(expressions[0]).as_node<expr_syntax*>());
         // Check if each token exists.
         // Returnd value of the calling will be nullptr (aka NULL in C) if it isn't there; otherwise non-null pointer.
         if (ctx->Plus())
@@ -96,8 +104,7 @@ antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)
             result->op = binop::divide;
         if (ctx->Modulo())
             result->op = binop::modulo;
-        result->rhs.reset(as<expr_syntax *>(visit(expressions[1])));
-        return static_cast<expr_syntax *>(result);
+        result->rhs.reset((*this)(expressions[1]).as_node<expr_syntax*>());
     }
     // Otherwise, if `+` or `-` presented, it'll be a `unaryop_expr_syntax`.
     if (ctx->Plus() || ctx->Minus())
@@ -109,8 +116,8 @@ antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)
             result->op = unaryop::plus;
         if (ctx->Minus())
             result->op = unaryop::minus;
-        result->rhs.reset(as<expr_syntax *>(visit(expressions[0])));
-        return static_cast<expr_syntax *>(result);
+        result->rhs.reset((*this)(expressions[0]).as_node<expr_syntax*>());
+        return VisitResult(result);
     }
     // In the case that `(` exists as a child, this is an expression like `'(' expressions[0] ')'`.
     if (ctx->LeftParen())
@@ -118,6 +125,7 @@ antlrcpp::Any syntax_tree_builder::visitExp(C1Parser::ExpContext *ctx)
     // If `number` exists as a child, we can say it's a literal integer expression.
     if (auto number = ctx->number())
         return visit(number);
+    return VisitResult(nullptr);
 }
 
 antlrcpp::Any syntax_tree_builder::visitNumber(C1Parser::NumberContext *ctx)
@@ -133,51 +141,14 @@ antlrcpp::Any syntax_tree_builder::visitNumber(C1Parser::NumberContext *ctx)
             result->intConst = std::stoi(text, nullptr, 16); // std::stoi will eat '0x'
         /* you need to add other situations here */
         
-        return static_cast<expr_syntax *>(result);
+        return VisitResult(result);
     }
     // else FloatConst
-    else
-    {
-        return static_cast<expr_syntax *>(result);
-    }
+    return VisitResult(result);
 }
 
-ptr<syntax_tree_node> syntax_tree_builder::operator()(antlr4::tree::ParseTree *ctx)
+VisitResult syntax_tree_builder::operator()(antlr4::tree::ParseTree *ctx)
 {
-    auto result = visit(ctx);
-    if (is<syntax_tree_node *>(result))
-        return ptr<syntax_tree_node>(as<syntax_tree_node *>(result));
-    if (is<assembly *>(result))
-        return ptr<syntax_tree_node>(as<assembly *>(result));
-    if (is<global_def_syntax *>(result))
-        return ptr<syntax_tree_node>(as<global_def_syntax *>(result));
-    if (is<func_def_syntax *>(result))
-        return ptr<syntax_tree_node>(as<func_def_syntax *>(result));
-    if (is<cond_syntax *>(result))
-        return ptr<syntax_tree_node>(as<cond_syntax *>(result));
-    if (is<expr_syntax *>(result))
-        return ptr<syntax_tree_node>(as<expr_syntax *>(result));
-    if (is<binop_expr_syntax *>(result))
-        return ptr<syntax_tree_node>(as<binop_expr_syntax *>(result));
-    if (is<unaryop_expr_syntax *>(result))
-        return ptr<syntax_tree_node>(as<unaryop_expr_syntax *>(result));
-    if (is<lval_syntax *>(result))
-        return ptr<syntax_tree_node>(as<lval_syntax *>(result));
-    if (is<literal_syntax *>(result))
-        return ptr<syntax_tree_node>(as<literal_syntax *>(result));
-    if (is<stmt_syntax *>(result))
-        return ptr<syntax_tree_node>(as<stmt_syntax *>(result));
-    if (is<var_def_stmt_syntax *>(result))
-        return ptr<syntax_tree_node>(as<var_def_stmt_syntax *>(result));
-    if (is<assign_stmt_syntax *>(result))
-        return ptr<syntax_tree_node>(as<assign_stmt_syntax *>(result));
-    if (is<func_call_stmt_syntax *>(result))
-        return ptr<syntax_tree_node>(as<func_call_stmt_syntax *>(result));
-    if (is<block_syntax *>(result))
-        return ptr<syntax_tree_node>(as<block_syntax *>(result));
-    if (is<if_stmt_syntax *>(result))
-        return ptr<syntax_tree_node>(as<if_stmt_syntax *>(result));
-    if (is<while_stmt_syntax *>(result))
-        return ptr<syntax_tree_node>(as<while_stmt_syntax *>(result));
-    return nullptr;
+    auto res = visit(ctx);
+    return std::any_cast<VisitResult>(res);
 }

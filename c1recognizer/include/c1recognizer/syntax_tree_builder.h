@@ -5,11 +5,40 @@
 #include "c1recognizer/syntax_tree.h"
 #include "C1ParserBaseVisitor.h"
 #include <c1recognizer/error_reporter.h>
+#include <variant>
+#include <vector>
 
 namespace c1_recognizer
 {
 namespace syntax_tree
 {
+
+/*
+  You can add type of visiting result to std::variant<syntax_tree_node*, vector<...>, ...>
+*/
+class VisitResult: public std::variant<syntax_tree_node*,
+                                      std::vector<syntax_tree_node*>> {
+public:
+  VisitResult(syntax_tree_node* opnd): std::variant<syntax_tree_node*, std::vector<syntax_tree_node*>>(opnd) {}
+  VisitResult(std::vector<syntax_tree_node*> opnd): std::variant<syntax_tree_node*, std::vector<syntax_tree_node*>>(opnd) {}
+
+  /**
+    as vector or other types you defined
+   */
+  template<typename T>
+  T as() {
+    return std::get<T>(*this);
+  }
+  
+  /**
+   as pointer of syntax tree node type
+   */
+  template<typename T>
+  T as_node() {
+    return dynamic_cast<T>(std::get<syntax_tree_node*>(*this));
+  }
+};
+
 class syntax_tree_builder : public C1ParserBaseVisitor
 {
   public:
@@ -29,7 +58,7 @@ class syntax_tree_builder : public C1ParserBaseVisitor
     virtual antlrcpp::Any visitExp(C1Parser::ExpContext *ctx) override;
     virtual antlrcpp::Any visitNumber(C1Parser::NumberContext *ctx) override;
 
-    ptr<syntax_tree_node> operator()(antlr4::tree::ParseTree *ctx);
+    VisitResult operator()(antlr4::tree::ParseTree *ctx);
 
   private:
     error_reporter &err;
