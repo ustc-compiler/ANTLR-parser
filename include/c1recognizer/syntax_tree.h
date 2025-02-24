@@ -74,6 +74,15 @@ struct syntax_tree_node
     int pos;
     // Used in syntax_tree_visitor. Irrelevant to syntax tree generation.
     virtual void accept(syntax_tree_visitor &visitor) = 0;
+    virtual ~syntax_tree_node() {}
+    template<typename T>
+    bool is() {
+        return dynamic_cast<T>(this) != nullptr;
+    }
+    template<typename T>
+    T as() {
+        return dynamic_cast<T>(this);
+    }
 };
 
 // Root node of an ordinary syntax tree.

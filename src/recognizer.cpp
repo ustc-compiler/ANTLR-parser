@@ -1,3 +1,4 @@
+#include "c1recognizer/syntax_tree.h"
 #include <antlr4-runtime.h>
 #include <C1Lexer.h>
 #include <C1Parser.h>
@@ -47,6 +48,6 @@ bool recognizer::execute(error_reporter &_err)
         return false;
 
     syntax_tree_builder ast_builder(_err);
-    ast = ast_builder(tree);
+    ast = ptr<syntax_tree_node>(ast_builder(tree).as<syntax_tree_node*>());
     return true;
 }
